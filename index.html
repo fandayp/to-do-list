@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Website Title & Description for Search Engine purposes -->
+		<title>Awesome To Do List</title>
+		<!-- Mobile viewport optimized -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<!-- Bootstrap CSS -->
+		<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="includes/css/bootstrap-glyphicons.css" rel="stylesheet">
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="includes/css/styles.css">
+		<!-- font -->
+		<link href="https://fonts.googleapis.com/css?family=Fira+Sans+Condensed|Lobster+Two" rel="stylesheet">
+		<!-- Include Modernizr in the head, before any other Javascript -->
+		<script src="includes/js/modernizr-2.6.2.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"> </script>
+	</head>
+
+<body ng-app="myApp" ng-controller="todoCtrl">
+
+	<div class="container">
+		<nav class="navbar navbar-fixed-top">
+			<div class="container">
+				<div class="center">
+					<h1>Your Awesome To Do List</h1>
+				</div>
+			</div>
+		</nav>
+
+		<div class="banner">
+			<div class="container center">
+				<h4>Create your own awesome to do list here!</h4>
+				<h4>Easy and beautiful  <span class="glyphicon glyphicon-heart"></span></h4>
+			</div>
+		</div>
+
+		<button class="btn btn-default col-sm-1 showup" type="button">+ Add To Do</button>
+
+		<div class="container col-sm-6">
+			<form class="form-horizontal forminput " ng-submit="todoAdd()">
+				<div class="form-group">
+					<label class="control-label col-sm-3 col-sm-offset-1" for="title"><h4>Title</h4></label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" id="title" placeholder="Enter the title here" ng-model="todoTitle">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-3 col-sm-offset-1" for="description"><h4>Description</h4></label>
+					<div class="col-sm-6">
+						<textarea class="form-control" id ="description" rows="3" placeholder="Enter the description here" ng-model="todoDesc"></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-3 col-sm-offset-1" for="startDate"><h4>Start Date</h4></label>
+					<div class="col-sm-6">
+						<input type="date" id="startDate" class="form-control" ng-model="startDate">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-3 col-sm-offset-1" for="endDate"><h4>End Date</h4></label>
+					<div class="col-sm-6">
+						<input type="date" id="endDate" class="form-control" ng-model="endDate"></input>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-3 col-sm-offset-1"><h4>Priority</h4></label>
+					<div class="col-sm-3">
+						<label class="radio">
+							<input type="radio" id="low" value="High" name="priority" ng-model="todoPriority"><p>High</p>
+						</label>
+						<label class="radio">
+							<input type="radio" id="medium" value="Medium" name="priority" ng-model="todoPriority"><p>Medium</p>
+						</label>
+						<label class="radio">
+							<input type="radio" id="high" value="Low" name="priority" ng-model="todoPriority"><p>Low</p>
+						</label>
+					</div>
+				</div>
+				<div class="col-sm-12 text-right">
+					<button type="submit" class="btn btn-default text-white add-btn" ng-click="addTodo()">Add</button>
+					<button type="button" class="btn btn-default text-white close-btn" data-dismiss="modal">Close</button>
+				</div>
+			</form>
+		</div>
+
+		<div class="row col-sm-12" >
+			<hr>
+			<h2>Your To Do List</h2>
+			<div class="row">
+				<ul class="todo-list">
+					<li class="col-sm-8" ng-repeat="x in todoList track by x.ID">
+						<div class="grid input-grup todocheck">
+							<div class="col-sm-1 text-center row margin-top-10"><input type="checkbox" ng-model="x.done" ng-change="saveChage()"></div>
+							<div class="col-sm-6">
+								<h4>Title: <span class="done-{{x.done}} title" contenteditable="false" ng-model="todoTitle"  ng-attr-id="title-{{x.ID}}" ><strong>{{x.Title}}</strong></span></h4>
+								<h4>Description: <span class="done-{{x.done}} description" contenteditable="false" ng-model="todoDesc" ng-attr-id="desc-{{x.ID}}" >{{x.Desc}}</span></h4>
+								<h4>Start date: <span class="done-{{x.done}} start" contenteditable="false" ng-model="startDate" ng-attr-id="start-{{x.ID}}" >{{x.Start | date : 'mediumDate'}}</span></h4>
+								<h4>End date: <span class="done-{{x.done}} end" contenteditable="false" ng-model="endDate" ng-attr-id="end-{{x.ID}}" >{{x.End | date : 'mediumDate'}}</span></h4>
+								<h4>Priority: <span class="done-{{x.done}} priority" contenteditable="false" ng-model="todoPriority" ng-attr-id="priority-{{x.ID}}">{{x.Priority}}</span></h4>
+							</div>
+						</div>
+						<button class="save-btn btn btn-default btn-small" id="save-{{x.ID}}" ng-click="saveField(x.ID); showEdit=false; showSave=false" ng-show="showSave">Save</button>
+						<button class="edit-btn btn btn-default btn-small" id="{{x.ID}}" ng-click="editField(x.ID); showSave=true; showEdit=true" ng-hide="showEdit">Edit</button>
+					</li>
+				</ul>
+			</div>
+		</div> <!-- end list of todos -->
+		<div class="col-sm-12 text-left margin-top-40">
+			<button class="btn btn-default" ng-click="remove(); addTodo()">Delete Completed Task</button>
+		</div>
+	</div>
+
+	<footer>
+		<div class="container">
+			<div class="row">
+			<div class="center">
+				<h6>Coded by 2016 Fanda YP</h6>
+			</div>
+	</footer>
+
+<script>
+	$(document).ready(function(){
+		var id = null;
+
+	    $(".showup").click(function(){
+	        $(".forminput").toggle();
+	    });
+
+	    $(".add-btn").click(function(){
+	    	$(".forminput").toggle();
+	    });
+
+	    $(".close-btn").click(function(){
+	    	$(".forminput").toggle();
+	    });
+
+	    // $(".edit-btn").click(function(){
+	    // 	id = $(this).attr('id');
+	    // 	$("#save-"+id).toggle();
+	    // 	if ($('#'+id).text() == "Edit")
+	    // 		$('#'+id).text("Cancel").button("refresh");
+	    // 	else 
+	    // 		$('#'+id).text("Edit").button("refresh");
+	    // });
+
+	    $(".save-btn").click(function(){
+	    	$("#save-"+id).toggle();
+	    	$('#'+id).text("Edit").button("refresh");
+	    });
+	});
+
+	function save() {
+		var editable_elements = document.querySelectorAll("[contenteditable=true]");
+		for(var i=0; i<editable_elements.length; i++)
+		    editable_elements[i].setAttribute("contentEditable", false);	
+	}
+
+	var app = angular.module('myApp', []); 
+
+	app.controller('todoCtrl', function($scope) {
+		$scope.todoTitle = null;
+		$scope.todoDesc = null;
+		$scope.startDate = null;
+		$scope.endDate = null;
+		$scope.todoPriority = null;
+		$scope.i = 0;
+
+		$scope.todoList = [{ID: 0, Title:'Clean the house', Desc:'Untill clean', Start:'24/03/2017', End:'24/03/2017', Priority:'High', done:false}];
+
+		$scope.todoAdd = function() {
+			$scope.i++;
+			$scope.todoList.push({ID: $scope.i, Title:$scope.todoTitle, Desc:$scope.todoDesc, Start:$scope.startDate, End:$scope.endDate, Priority:$scope.todoPriority, done:false});
+			$scope.todoTitle = '';
+			$scope.todoDesc='';
+			$scope.startDate= '';
+			$scope.endDate= '';
+			$scope.todoPriority= '';
+		};
+
+		$scope.remove = function() {
+			var oldList = $scope.todoList;
+			$scope.todoList = [];
+			angular.forEach(oldList, function(x) {
+				if (!x.done) $scope.todoList.push(x);
+			});
+			$scope.todoTitle = '';
+			$scope.todoDesc='';
+			$scope.startDate= '';
+			$scope.endDate= '';
+			$scope.todoPriority= '';
+
+		};
+
+
+		$scope.editField = function(id) {
+			$scope.editable_elements = angular.element(document.querySelector('#title-'+id));
+			$scope.editable_elements.attr("contentEditable", true);	
+			$scope.editable_elements = angular.element(document.querySelector('#desc-'+id));
+			$scope.editable_elements.attr("contentEditable", true);	
+			$scope.editable_elements = angular.element(document.querySelector('#start-'+id));
+			$scope.editable_elements.attr("contentEditable", true);	
+			$scope.editable_elements = angular.element(document.querySelector('#end-'+id));
+			$scope.editable_elements.attr("contentEditable", true);	
+			$scope.editable_elements = angular.element(document.querySelector('#priority-'+id));
+			$scope.editable_elements.attr("contentEditable", true);	
+		}
+
+		$scope.saveField = function(id) {
+			$scope.todoList.push({ID: id, Title:$scope.todoTitle, Desc:$scope.todoDesc, Start:$scope.startDate, End:$scope.endDate, Priority:$scope.todoPriority, done:true});
+
+			$scope.editable_elements = angular.element(document.querySelector('#title-'+id));
+			$scope.editable_elements.attr("contentEditable", false);	
+			$scope.editable_elements = angular.element(document.querySelector('#desc-'+id));
+			$scope.editable_elements.attr("contentEditable", false);	
+			$scope.editable_elements = angular.element(document.querySelector('#start-'+id));
+			$scope.editable_elements.attr("contentEditable", false);	
+			$scope.editable_elements = angular.element(document.querySelector('#end-'+id));
+			$scope.editable_elements.attr("contentEditable", false);	
+			$scope.editable_elements = angular.element(document.querySelector('#priority-'+id));
+			$scope.editable_elements.attr("contentEditable", false);
+		}
+
+	});
+</script>
+
+	</body>
+</html>
